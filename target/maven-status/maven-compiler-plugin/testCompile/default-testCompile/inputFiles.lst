@@ -1,0 +1,4 @@
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/test/java/com/example/expensetracker/ExpenseTrackerApplicationTests.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/test/java/com/example/expensetracker/repository/CategoryRepositoryTest.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/test/java/com/example/expensetracker/service/CategoryServiceTest.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/test/java/com/example/expensetracker/web/CategoryControllerTest.java

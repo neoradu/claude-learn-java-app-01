@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.example.expensetracker.web.CategoryControllerTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.154 s -- in com.example.expensetracker.web.CategoryControllerTest

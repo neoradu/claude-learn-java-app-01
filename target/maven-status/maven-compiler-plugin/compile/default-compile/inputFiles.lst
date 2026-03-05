@@ -1,0 +1,12 @@
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/ExpenseTrackerApplication.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/config/DataInitializer.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/domain/Category.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/repository/CategoryRepository.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/service/CategoryInUseException.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/service/CategoryService.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/service/DuplicateCategoryException.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/service/ResourceNotFoundException.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/web/CategoryController.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/web/GlobalExceptionHandler.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/web/HomeController.java
+/home/radu/work/learn_claude_code/claude-learn-java-app-01/src/main/java/com/example/expensetracker/web/form/CategoryForm.java
