@@ -1,6 +1,7 @@
 package com.example.expensetracker.service;
 
 import com.example.expensetracker.repository.CategoryRepository;
+import com.example.expensetracker.repository.ExpenseRepository;
 import com.example.expensetracker.web.form.CategoryForm;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,8 @@ class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
-
+    @Mock
+    private ExpenseRepository expenseRepository;
 
     @InjectMocks
     private CategoryService categoryService;

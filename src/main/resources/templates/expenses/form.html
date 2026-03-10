@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${isEdit} ? 'Edit Expense' : 'New Expense'">Expense Form</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{fragments :: header}"></div>
+    <div th:replace="~{fragments :: flash}"></div>
+
+    <section class="card">
+        <h1 th:text="${isEdit} ? 'Edit Expense' : 'New Expense'"></h1>
+        <form th:object="${expenseForm}"
+              th:action="${isEdit} ? @{/expenses/{id}(id=${expenseId})} : @{/expenses}"
+              method="post" class="form-grid">
+
+            <label>Description
+                <input type="text" th:field="*{description}" maxlength="255" required>
+                <small class="error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></small>
+            </label>
+
+            <label>Amount
+                <input type="number" th:field="*{amount}" step="0.01" min="0.01" required>
+                <small class="error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}"></small>
+            </label>
+
+            <label>Date
+                <input type="date" th:field="*{date}" required>
+                <small class="error" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></small>
+            </label>
+
+            <label>Category
+                <select th:field="*{categoryId}" required>
+                    <option value="">Select a category</option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name}">
+                    </option>
+                </select>
+                <small class="error" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></small>
+            </label>
+
+            <div class="actions">
+                <button type="submit" th:text="${isEdit} ? 'Update Expense' : 'Create Expense'"></button>
+                <a class="btn-muted" th:href="@{/expenses}">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+</body>
+</html>

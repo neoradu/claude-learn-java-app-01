@@ -2,6 +2,7 @@ package com.example.expensetracker.service;
 
 import com.example.expensetracker.domain.Category;
 import com.example.expensetracker.repository.CategoryRepository;
+import com.example.expensetracker.repository.ExpenseRepository;
 import com.example.expensetracker.web.form.CategoryForm;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,11 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ExpenseRepository expenseRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ExpenseRepository expenseRepository) {
         this.categoryRepository = categoryRepository;
+        this.expenseRepository = expenseRepository;
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +61,9 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(Long id) {
-
+        if (expenseRepository.existsByCategoryId(id)) {
+            throw new CategoryInUseException("Category is in use by one or more expenses.");
+        }
         categoryRepository.delete(getCategory(id));
     }
 
