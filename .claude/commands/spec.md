@@ -55,6 +55,12 @@ Before making any content, switch to a new Git branch using the `branch_name` de
 ## Step 4. Draft the spec content
 
 Create a markdown spec document that Plan mode can use directly and save it in the _specs folder using the `feature_slug`. Use the exact structure as defined in the spec template file here: @_specs/template.md. Do not add technical implementation details such as code examples.
+In the plan document specify that we should use skills:
+- clean-code
+- design-patterns
+- solid-principles
+- spring-boot-patterns
+- test-quality
 
 ## Step 5. Final output to the user
 
