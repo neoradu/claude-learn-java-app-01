@@ -2,6 +2,8 @@ package com.example.expensetracker.repository;
 
 import com.example.expensetracker.domain.Category;
 import com.example.expensetracker.domain.Expense;
+import com.example.expensetracker.domain.Role;
+import com.example.expensetracker.domain.User;
 import jakarta.persistence.EntityManager;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,6 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class ExpenseRepositoryTest {
 
     @Autowired
@@ -26,6 +30,9 @@ class ExpenseRepositoryTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -36,19 +43,29 @@ class ExpenseRepositoryTest {
         return categoryRepository.save(category);
     }
 
-    private Expense savedExpense(Category category) {
+    private User savedUser() {
+        User user = new User();
+        user.setEmail("test@example.com");
+        user.setPassword("hashedpassword");
+        user.setRole(Role.USER);
+        return userRepository.save(user);
+    }
+
+    private Expense savedExpense(Category category, User owner) {
         Expense expense = new Expense();
         expense.setDescription("Lunch");
         expense.setAmount(new BigDecimal("12.50"));
         expense.setDate(LocalDate.now());
         expense.setCategory(category);
+        expense.setOwner(owner);
         return expenseRepository.save(expense);
     }
 
     @Test
     void save_and_findById() {
         Category category = savedCategory();
-        Expense expense = savedExpense(category);
+        User owner = savedUser();
+        Expense expense = savedExpense(category, owner);
 
         Optional<Expense> found = expenseRepository.findById(expense.getId());
 
@@ -60,7 +77,8 @@ class ExpenseRepositoryTest {
     @Test
     void update_changesDescription() {
         Category category = savedCategory();
-        Expense expense = savedExpense(category);
+        User owner = savedUser();
+        Expense expense = savedExpense(category, owner);
 
         expense.setDescription("Dinner");
         expenseRepository.save(expense);
@@ -71,7 +89,8 @@ class ExpenseRepositoryTest {
     @Test
     void delete_removesExpense() {
         Category category = savedCategory();
-        Expense expense = savedExpense(category);
+        User owner = savedUser();
+        Expense expense = savedExpense(category, owner);
         Long id = expense.getId();
 
         expenseRepository.delete(expense);
@@ -82,7 +101,8 @@ class ExpenseRepositoryTest {
     @Test
     void existsByCategoryId_returnsTrue_whenExpenseExists() {
         Category category = savedCategory();
-        savedExpense(category);
+        User owner = savedUser();
+        savedExpense(category, owner);
 
         assertThat(expenseRepository.existsByCategoryId(category.getId())).isTrue();
     }
@@ -97,8 +117,9 @@ class ExpenseRepositoryTest {
     @Test
     void findAll_withEntityGraph_loadsCategory_withoutNPlusOne() {
         Category category = savedCategory();
-        savedExpense(category);
-        savedExpense(category);
+        User owner = savedUser();
+        savedExpense(category, owner);
+        savedExpense(category, owner);
 
         SessionFactory sessionFactory = entityManager.getEntityManagerFactory().unwrap(SessionFactory.class);
         Statistics stats = sessionFactory.getStatistics();
@@ -107,11 +128,8 @@ class ExpenseRepositoryTest {
 
         Page<Expense> page = expenseRepository.findAll(Specification.where(null), PageRequest.of(0, 20));
 
-        // Access category on each expense — must not trigger additional queries
         page.getContent().forEach(e -> assertThat(e.getCategory().getName()).isNotNull());
 
-        // With @EntityGraph, category is loaded via JOIN in the data query.
-        // Total statements: 1 data query + 1 count query = 2
         assertThat(stats.getPrepareStatementCount()).isLessThanOrEqualTo(2);
     }
 }

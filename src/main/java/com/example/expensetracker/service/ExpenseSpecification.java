@@ -30,4 +30,8 @@ public class ExpenseSpecification {
     public static Specification<Expense> maxAmount(BigDecimal max) {
         return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("amount"), max);
     }
+
+    public static Specification<Expense> hasOwner(Long userId) {
+        return (root, query, cb) -> cb.equal(root.get("owner").get("id"), userId);
+    }
 }

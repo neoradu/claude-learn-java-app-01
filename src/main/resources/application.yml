@@ -13,3 +13,8 @@ spring:
 
 server:
   port: ${PORT:8080}
+
+app:
+  seed:
+    user-password: 1234
+    admin-password: 1234

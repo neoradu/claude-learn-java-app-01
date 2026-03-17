@@ -1,6 +1,7 @@
 package com.example.expensetracker.web;
 
 import com.example.expensetracker.domain.Expense;
+import com.example.expensetracker.domain.User;
 import com.example.expensetracker.service.CategoryService;
 import com.example.expensetracker.service.ExpenseService;
 import com.example.expensetracker.web.form.ExpenseFilterForm;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,8 +37,9 @@ public class ExpenseController {
     @GetMapping
     public String list(@ModelAttribute("filter") ExpenseFilterForm filter,
                        @PageableDefault(size = 20, sort = "date", direction = Sort.Direction.DESC) Pageable pageable,
+                       @AuthenticationPrincipal User currentUser,
                        Model model) {
-        Page<Expense> expenses = expenseService.getExpenses(filter, pageable);
+        Page<Expense> expenses = expenseService.getExpenses(filter, pageable, currentUser);
         model.addAttribute("expenses", expenses);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "expenses/list";
@@ -53,6 +56,7 @@ public class ExpenseController {
     @PostMapping
     public String create(@Valid @ModelAttribute("expenseForm") ExpenseForm form,
                          BindingResult bindingResult,
+                         @AuthenticationPrincipal User currentUser,
                          Model model,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -60,14 +64,16 @@ public class ExpenseController {
             model.addAttribute("isEdit", false);
             return "expenses/form";
         }
-        expenseService.createExpense(form);
+        expenseService.createExpense(form, currentUser);
         redirectAttributes.addFlashAttribute("successMessage", "Expense created successfully.");
         return "redirect:/expenses";
     }
 
     @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable Long id, Model model) {
-        Expense expense = expenseService.getExpense(id);
+    public String editForm(@PathVariable Long id,
+                           @AuthenticationPrincipal User currentUser,
+                           Model model) {
+        Expense expense = expenseService.getExpense(id, currentUser);
         ExpenseForm form = new ExpenseForm();
         form.setDescription(expense.getDescription());
         form.setAmount(expense.getAmount());
@@ -85,6 +91,7 @@ public class ExpenseController {
     public String update(@PathVariable Long id,
                          @Valid @ModelAttribute("expenseForm") ExpenseForm form,
                          BindingResult bindingResult,
+                         @AuthenticationPrincipal User currentUser,
                          Model model,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -93,14 +100,16 @@ public class ExpenseController {
             model.addAttribute("expenseId", id);
             return "expenses/form";
         }
-        expenseService.updateExpense(id, form);
+        expenseService.updateExpense(id, form, currentUser);
         redirectAttributes.addFlashAttribute("successMessage", "Expense updated successfully.");
         return "redirect:/expenses";
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        expenseService.deleteExpense(id);
+    public String delete(@PathVariable Long id,
+                         @AuthenticationPrincipal User currentUser,
+                         RedirectAttributes redirectAttributes) {
+        expenseService.deleteExpense(id, currentUser);
         redirectAttributes.addFlashAttribute("successMessage", "Expense deleted successfully.");
         return "redirect:/expenses";
     }
